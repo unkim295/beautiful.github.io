@@ -3,119 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TERMINAL // ROOT_ACCESS</title>
+    <title>Critical System Error</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: #030a04;
-            color: #00ff66;
-            font-family: "Courier New", Courier, monospace;
-            font-size: 15px;
-            line-height: 1.4;
+            background-color: #008080; /* 經典 Win98 藍綠桌面 */
             height: 100vh;
             width: 100vw;
             overflow: hidden;
             user-select: none;
             touch-action: manipulation;
+            font-family: "Tahoma", -apple-system, sans-serif;
+            position: relative;
         }
 
-        /* 掃描線復古螢幕感 */
-        body::before {
-            content: " ";
+        /* 經典 Win98 視窗樣式 */
+        .window {
             position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 4px;
-            pointer-events: none;
+            width: 280px;
+            background: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #000;
+            border-bottom-color: #000;
+            box-shadow: 2px 2px 0 #000;
             z-index: 10;
         }
-
-        #terminal {
-            padding: 20px;
-            height: 100%;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            word-break: break-all;
-            text-shadow: 0 0 8px rgba(0, 255, 102, 0.7);
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            padding: 3px 6px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .close-btn {
+            background: #c0c0c0;
+            border: 1px solid #fff;
+            border-right-color: #000;
+            border-bottom-color: #000;
+            font-size: 10px;
+            width: 16px;
+            height: 14px;
+            line-height: 12px;
+            text-align: center;
+            font-weight: bold;
+            color: #000;
+        }
+        .content {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 13px;
+            color: #000;
+        }
+        .icon {
+            width: 32px;
+            height: 32px;
+            background: #ff0000;
+            border-radius: 50%;
+            color: #fff;
+            font-weight: bold;
+            font-size: 22px;
+            line-height: 32px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .btn-area {
+            display: flex;
+            justify-content: center;
+            padding-bottom: 12px;
+        }
+        .ok-btn {
+            background: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #000;
+            border-bottom-color: #000;
+            padding: 3px 20px;
+            font-size: 12px;
         }
 
-        .cursor {
-            display: inline-block;
-            width: 9px;
-            height: 16px;
-            background: #00ff66;
-            vertical-align: middle;
-            animation: blink 0.8s infinite;
-        }
-
-        @keyframes blink { 50% { opacity: 0; } }
-
-        /* 警報彈窗 */
-        #alertBox {
+        /* 藍屏死機畫面 */
+        #bsod {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid #ff0055;
-            box-shadow: 0 0 30px #ff0055;
-            color: #ff0055;
-            padding: 25px;
-            text-align: center;
-            font-size: 1.4rem;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #0000aa;
+            color: #ffffff;
+            font-family: "Courier New", monospace;
+            padding: 40px 20px;
+            z-index: 99999;
+            box-sizing: border-box;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .highlight {
+            background: #aaaaaa;
+            color: #0000aa;
+            padding: 0 4px;
             font-weight: bold;
-            letter-spacing: 2px;
-            z-index: 100;
         }
     </style>
 </head>
-<body onclick="addCode()" onkeydown="addCode()">
+<body onclick="triggerCrash()">
 
-    <div id="terminal"><span id="text"></span><span class="cursor"></span></div>
-    
-    <div id="alertBox">
-        ⚠️ ACCESS GRANTED ⚠️<br>
-        <span style="font-size: 0.9rem; color: #fff;">SYSTEM OVERRIDE COMPLETED</span>
+    <!-- 初始引導視窗 -->
+    <div id="firstWindow" class="window" style="top: 35%; left: 50%; transform: translate(-50%, -50%);">
+        <div class="title-bar">
+            <span>System Notice</span>
+            <div class="close-btn">X</div>
+        </div>
+        <div class="content">
+            <div class="icon">!</div>
+            <div>點擊螢幕任何位置啟動系統自檢修復...</div>
+        </div>
+        <div class="btn-area">
+            <button class="ok-btn">確定</button>
+        </div>
+    </div>
+
+    <!-- 經典藍屏畫面 -->
+    <div id="bsod">
+        <center><span class="highlight"> Windows </span></center><br>
+        A fatal exception 0E has occurred at 0028:C0011E36 in VXD VMM(01) + 00010E36.<br>
+        The current application will be terminated.<br><br>
+        * Press any key to terminate the current application.<br>
+        * Press CTRL+ALT+DEL again to restart your computer. You will lose any unsaved information in all applications.<br><br>
+        <center>SYSTEM_CRASH_DUMP: 0x0000007E (0xC0000005, 0x804E5B46)</center><br>
+        <center style="animation: blink 1s infinite;">點擊螢幕重啟系統...</center>
     </div>
 
     <script>
-        const fakeSnippets = [
-            "INITIALIZING EXPLOIT PAYLOAD [SHA-256]...\n",
-            "CONNECTING TO 192.168.0.1:443 -> BYPASSING PROXY...\n",
-            "struct group_info init_groups = { .usage = ATOMIC_INIT(2) };\n",
-            "int set_current_groups(struct group_info *group_info) {\n",
-            "    int i;\n    struct cred *new;\n",
-            "    WARN_ON(!atomic_read(&group_info->usage));\n",
-            "OVERRIDING MEMORY BUFFER [0x7ffeeb4b28] OK.\n",
-            "inject_shellcode(0xdeadbeef, ARCH_X86_64);\n",
-            "FETCHING ROOT ENCRYPTION KEYS...\n",
-            "FIREWALL STATUS: DISABLED [SUCCESS]\n",
-            "DOWNLOADING /etc/shadow [||||||||||||||||||||] 100%\n",
-            "root@mainframe:~# GRANT ALL PRIVILEGES TO 'ANON';\n"
-        ];
+        let spawned = 0;
+        let isCrashing = false;
+        let bsodActive = false;
 
-        let index = 0;
-        let count = 0;
-        const textEl = document.getElementById("text");
-        const term = document.getElementById("terminal");
-        const alertBox = document.getElementById("alertBox");
-
-        function addCode() {
-            textEl.textContent += fakeSnippets[index % fakeSnippets.length];
-            index++;
-            count++;
-            term.scrollTop = term.scrollHeight;
-
-            // 敲滿 15 次觸發一次入侵成功彈窗
-            if (count % 15 === 0) {
-                alertBox.style.display = "block";
-                setTimeout(() => { alertBox.style.display = "none"; }, 1500);
+        function triggerCrash() {
+            if (bsodActive) {
+                location.reload();
+                return;
             }
-        }
+            if (isCrashing) return;
+            isCrashing = true;
+            document.getElementById('firstWindow').style.display = 'none';
 
-        // 開局先自動打幾行
-        addCode(); addCode();
+            let posX = 30;
+            let posY = 40;
+            let zIndex = 20;
+
+            const timer = setInterval(() => {
+                spawned++;
+                zIndex++;
+
+                const win = document.createElement('div');
+                win.className = 'window';
+                win.style.left = posX + 'px';
+                win.style.top = posY + 'px';
+                win.style.zIndex = zIndex;
+
+                win.innerHTML = `
+                    <div class="title-bar">
+                        <span>FATAL_ERROR_0x000000${spawned}</span>
+                        <div class="close-btn">X</div>
+                    </div>
+                    <div class="content">
+                        <div class="icon">✕</div>
+                        <div>Critical memory overflow: Buffer cannot be released!</div>
+                    </div>
+                    <div class="btn-area">
+                        <button class="ok-btn">OK</button>
+                    </div>
+                `;
+                document.body.appendChild(win);
+
+                // 經典視窗瀑布下墜殘影位移
+                posX = (posX + 25) % (window.innerWidth - 240);
+                posY = (posY + 25) % (window.innerHeight - 150);
+
+                // 生成滿 30 個視窗後直接觸發藍屏
+                if (spawned >= 30) {
+                    clearInterval(timer);
+                    setTimeout(() => {
+                        document.getElementById('bsod').style.display = 'block';
+                        bsodActive = true;
+                    }, 500);
+                }
+            }, 60); // 每 60 毫秒彈出一個
+        }
     </script>
 </body>
 </html>
